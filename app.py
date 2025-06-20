@@ -1,48 +1,29 @@
-import requests
 import streamlit as st
+import requests
 
+st.title("📚 StudyPal - Smart Study Assistant")
 
-#--- page configuration ---
-st.set_page_config(
-    page_title = "StudyPal",
-    page_icon = "🤖",
-    layout = "centered" #wide
-)
-st.title("🤖 StudyPal Application")
+menu = ["Upload Material", "Chat with Assistant"]
+choice = st.sidebar.selectbox("Select Option", menu)
 
-#--- API Details---
-API_URL="http://127.0.0.1:8000/ask"
-PROVIDERS= ["Groq", "Ollama"]
-MODELS= ["llama 3.3", "DeepSeek R1"]
+if choice == "Upload Material":
+    st.subheader("Upload Documents")
+    semester = st.text_input("Semester")
+    subject = st.text_input("Subject")
+    uploaded_file = st.file_uploader("Upload your study material (PDF, DOCX, TXT)", type=["pdf", "docx", "txt"])
+    if st.button("Upload"):
+        if uploaded_file and semester and subject:
+            res = requests.post(
+                "http://localhost:8000/upload",
+                files={"file": uploaded_file.getvalue()},
+                data={"semester": semester, "subject": subject},
+            )
+            st.success(res.json()["status"])
 
-#--- Initialize Session State---
-st.session_state.setdefault("show_settings",False)
-st.session_state.setdefault("provider",PROVIDERS[0])
-st.session_state.setdefault("model",MODELS[0])
-
-
-# --- Layout---
-col1, col2 = st.columns([8,1])
-question = col1.text_input(label="Ask your question", placeholder="eg. What is ML?")
-
-if col2.button("⚙️", help="Select Model settings"):
-    st.session_state.show_settings = not st.session_state.show_settings
-
-#--- Model Settings---
-if st.session_state.show_settings:
-    with st.expander("Model settings",expanded=True):
-        st.session_state.provider= st.selectbox(label="Provider",
-                                                options=PROVIDERS,
-                                                index=PROVIDERS.index(st.session_state.provider))
-        st.session_state.model = st.selectbox(label="Model",
-                                              options=MODELS,
-                                              index=MODELS.index(st.session_state.model))
-        st.success(f"using {st.session_state.provider} - {st.session_state.model}")
-
-
-#--- Get Answer from API---
-if st.button("get Answer"):
-    response= requests.post(url= API_URL, json= {"question":question})
-    result = response.json()
-    answer = result["answer"]
-    st.success(answer)
+elif choice == "Chat with Assistant":
+    st.subheader("Ask Questions from Your Documents")
+    user_query = st.text_input("Enter your question")
+    if st.button("Ask"):
+        if user_query:
+            res = requests.post("http://localhost:8000/chat", json={"query": user_query})
+            st.write("**Answer:**", res.json()["response"])
