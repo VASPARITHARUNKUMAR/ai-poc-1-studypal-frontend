@@ -10,7 +10,7 @@ if st.button("Ask"):
     if query:
         try:
             with st.spinner("Thinking..."):
-                res = requests.post("http://localhost:8000/chat", json={"query": query}, timeout=15)
+                res = requests.post("http://localhost:9000/chat", json={"query": query}, timeout=15)
                 if res.status_code == 200:
                     st.success("Answer received:")
                     st.write(res.json().get("response", "No response received"))
