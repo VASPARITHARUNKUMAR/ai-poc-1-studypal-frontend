@@ -27,7 +27,8 @@ elif choice == "Upload Documents":
     st.subheader("Upload Documents")
     semester = st.text_input("Semester")
     subject = st.text_input("Subject")
-    uploaded_file = st.file_uploader("Upload your study material (PDF, DOCX, TXT)", type=["pdf", "docx", "txt"])
+    uploaded_file = st.file_uploader("Upload your study material (PDF, DOC, DOCX, PPTX, XLSX, CSV, MD, TXT, JPG, PNG)", type=["pdf", "doc", "docx", "pptx", "xlsx", "csv", "md", "txt", "jpg", "jpeg", "png"]
+)
     if st.button("Upload"):
         if uploaded_file and semester and subject:
             files = {"file": (uploaded_file.name, uploaded_file, uploaded_file.type)}
