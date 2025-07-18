@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # Backend URL
-BACKEND = "http://localhost:9000"
+BACKEND = "http://localhost:8000"
 
 # Page Configuration
 st.set_page_config(page_title="StudyPal - Smart Assistant", page_icon="📚", layout="wide")
